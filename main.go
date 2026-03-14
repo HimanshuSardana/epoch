@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/sha1"
 	"fmt"
 	_ "io/fs"
 	"log"
@@ -36,6 +37,15 @@ func initializeRepo(DirName string) {
 	}
 }
 
+func hashObject(fileName string) {
+	header := fmt.Sprintf("blob %d\x00", len(fileName))
+	content := header + fileName
+	hash := sha1.New()
+	hash.Write([]byte(content))
+	result := hash.Sum(nil)
+	fmt.Printf("%x\n", result)
+}
+
 func printUsage() {
 	fmt.Println(`Usage: epoch <subcommand>
 
@@ -47,22 +57,26 @@ init: 	Initialize a new repository
 func main() {
 	root := "./test/"
 	validSubcommands := map[string]bool{
-		"init": true,
+		"init":        true,
+		"hash-object": true,
 	}
 
 	if len(os.Args) < 2 {
 		printUsage()
 	} else {
-		subcommand := os.Args[1]
+		cmd := os.Args[1]
 
-		if !validSubcommands[subcommand] {
+		if !validSubcommands[cmd] {
 			printUsage()
 			os.Exit(1)
 		}
 
-		switch subcommand {
+		switch cmd {
 		case "init":
 			initializeRepo(root)
+		case "hash-object":
+			fileName := os.Args[2]
+			hashObject(fileName)
 		}
 	}
 }
