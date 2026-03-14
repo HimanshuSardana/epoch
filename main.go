@@ -8,82 +8,61 @@ import (
 	"path/filepath"
 )
 
-func InitializeRepo(DirName string) {
-	root := DirName
-	root += "./.git"
+func initializeRepo(DirName string) {
+	GitRoot := filepath.Join(DirName, ".git")
 	dirs := []string{
-		root,
-		filepath.Join(root, "objects"),
-		filepath.Join(root, "refs"),
+		GitRoot,
+		filepath.Join(GitRoot, "objects"),
+		filepath.Join(GitRoot, "refs"),
 	}
 
 	files := []string{
-		filepath.Join(root, "HEAD"),
-		filepath.Join(root, "config"),
+		filepath.Join(GitRoot, "HEAD"),
+		filepath.Join(GitRoot, "config"),
 	}
 
-	for _, dir := range dirs {
-		err := os.MkdirAll(dir, 0o755)
+	for _, d := range dirs {
+		err := os.MkdirAll(d, 0o755)
 		if err != nil {
-			log.Fatalf(err.Error())
+			log.Fatal(err.Error())
 		}
 	}
 
-	for _, file := range files {
-		err := os.WriteFile(file, nil, 0o755)
+	for _, f := range files {
+		err := os.WriteFile(f, nil, 0o755)
 		if err != nil {
-			log.Fatalf(err.Error())
+			log.Fatal(err.Error())
 		}
 	}
 }
 
+func printUsage() {
+	fmt.Println(`Usage: epoch <subcommand>
+
+Available subcommands:
+init: 	Initialize a new repository
+		`)
+}
+
 func main() {
 	root := "./test/"
-	valid_subcommands := []string{
-		"init",
+	validSubcommands := map[string]bool{
+		"init": true,
 	}
 
 	if len(os.Args) < 2 {
-		fmt.Println(`Usage: epoch <subcommand>
-
-Available subcommands:
-init: 	Initialize a new repository
-		`)
+		printUsage()
 	} else {
 		subcommand := os.Args[1]
-		IsValid := false
-		for _, ValidSubcommand := range valid_subcommands {
-			if ValidSubcommand == subcommand {
-				IsValid = true
-			}
+
+		if !validSubcommands[subcommand] {
+			printUsage()
+			os.Exit(1)
 		}
 
-		if IsValid == false {
-			fmt.Println(`Usage: epoch <subcommand>
-
-Available subcommands:
-init: 	Initialize a new repository
-		`)
-
-			os.Exit(1)
-
-		} else {
-			if subcommand == "init" {
-				InitializeRepo(root)
-			}
+		switch subcommand {
+		case "init":
+			initializeRepo(root)
 		}
 	}
-
-	// err = filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	if !d.IsDir() {
-	// 		fmt.Println(path)
-	// 	}
-	// 	return nil
-	// })
-	// if err != nil {
-	// 	log.Fatalf("error walking the path %q: %v\n", root, err)
-	// }
 }
