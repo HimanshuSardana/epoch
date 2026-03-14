@@ -10,16 +10,16 @@ import (
 )
 
 func initializeRepo(DirName string) {
-	GitRoot := filepath.Join(DirName, ".git")
+	gitRoot := filepath.Join(DirName, ".git")
 	dirs := []string{
-		GitRoot,
-		filepath.Join(GitRoot, "objects"),
-		filepath.Join(GitRoot, "refs"),
+		gitRoot,
+		filepath.Join(gitRoot, "objects"),
+		filepath.Join(gitRoot, "refs"),
 	}
 
 	files := []string{
-		filepath.Join(GitRoot, "HEAD"),
-		filepath.Join(GitRoot, "config"),
+		filepath.Join(gitRoot, "HEAD"),
+		filepath.Join(gitRoot, "config"),
 	}
 
 	for _, d := range dirs {
