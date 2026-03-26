@@ -1,0 +1,12 @@
+[ai]
+provider = "cerebras"
+model = "llama3.1-8b"
+temperature = 0.3
+
+[squash]
+window_minutes = 10
+always_preview = true
+
+[commits]
+enforce_conventional = true
+allowed_types = ["feat", "fix", "docs", "style", "refactor", "perf", "test", "chore", "build", "ci", "revert"]
